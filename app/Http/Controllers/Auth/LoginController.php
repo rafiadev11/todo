@@ -3,27 +3,39 @@
     namespace App\Http\Controllers\Auth;
 
     use App\Http\Controllers\Controller;
+    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
-    use Illuminate\Support\Facades\Hash;
+    use Illuminate\Validation\ValidationException;
+    use Illuminate\View\View;
 
     class LoginController extends Controller
     {
-        public function index()
+        /**
+         * get the login form view
+         *
+         * @return View
+         */
+        public function index():View
         {
             return view('auth.login');
         }
 
-        public function login(Request $request)
+        /**
+         * Authenticate the user
+         *
+         * @param  Request  $request
+         *
+         * @return RedirectResponse
+         * @throws ValidationException
+         */
+        public function login(Request $request): RedirectResponse
         {
             $this->validate($request, [
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
-            $rememberMe = false;
-            if ($request->has('remember-me') && $request->get('remember-me') === 'on') {
-                $rememberMe = true;
-            }
+            $rememberMe = $request->has('remember-me') && $request->get('remember-me') === 'on';
             if (Auth::attempt([
                 'email' => $request->get('email'),
                 'password' => $request->get('password'),
@@ -36,7 +48,14 @@
             ]);
         }
 
-        public function logout(Request $request)
+        /**
+         * Log the user out
+         *
+         * @param  Request  $request
+         *
+         * @return RedirectResponse
+         */
+        public function logout(Request $request):RedirectResponse
         {
             Auth::logout();
             $request->session()->invalidate();

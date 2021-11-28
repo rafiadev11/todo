@@ -54,18 +54,55 @@
             return $this->hasMany(Item::class);
         }
 
-        // Hash password before saving to the database
+
+        /**
+         * Hash password before saving to database
+         *
+         * @param $value
+         */
         public function setPasswordAttribute($value): void
         {
             $this->attributes['password'] = Hash::make($value);
         }
 
-        // Create and return the user instance
+
+        /**
+         * Create a new user
+         * Set the user's role to user
+         *
+         * @param $userData
+         *
+         * @return User
+         */
         public function createUser($userData): User
         {
             $role = Role::where('slug', 'user')->first();
             $user = $this->create($userData);
             $user->roles()->attach($role);
             return $user;
+        }
+
+        public function hasRole(string $slug):bool
+        {
+            foreach ($this->roles as $role) {
+                if ($role->slug === $slug) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public function isAdmin()
+        {
+            return auth()->user()->hasRole('admin');
+        }
+
+        public function getUserItems($userId, bool $deleted)
+        {
+            return $this->with(['items' => function($query) use($deleted){
+                $query->when($deleted, function ($q){
+                    $q->onlyTrashed();
+                });
+            }])->findOrFail($userId);
         }
     }

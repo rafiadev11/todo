@@ -7,6 +7,11 @@
                         <a href="{{route('todo')}}"
                            class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
                            aria-current="page">My Todos</a>
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{route('users')}}"
+                               class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
+                               aria-current="page">Admin Dashboard</a>
+                        @endif
                     </div>
                 </div>
             </div>

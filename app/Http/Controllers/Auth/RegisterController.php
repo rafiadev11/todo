@@ -5,7 +5,9 @@
     use App\Http\Controllers\Controller;
     use App\Http\Requests\RegistrationRequest;
     use App\Models\User;
+    use Illuminate\Http\RedirectResponse;
     use Illuminate\Support\Facades\Auth;
+    use Illuminate\View\View;
 
     class RegisterController extends Controller
     {
@@ -22,12 +24,26 @@
             $this->user = $user;
         }
 
-        public function index()
+        /**
+         * get the registration form view
+         *
+         * @return View
+         */
+        public function index():View
         {
             return view('auth.register');
         }
 
-        public function register(RegistrationRequest $request)
+        /**
+         * Create the user's account
+         * Set the role as user
+         * Authenticate the user
+         *
+         * @param  RegistrationRequest  $request
+         *
+         * @return RedirectResponse
+         */
+        public function register(RegistrationRequest $request): RedirectResponse
         {
             $user = $this->user->createUser($request->all());
             Auth::login($user);

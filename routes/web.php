@@ -1,5 +1,6 @@
 <?php
 
+    use App\Http\Controllers\Admin\UsersController;
     use App\Http\Controllers\Auth\LoginController;
     use App\Http\Controllers\Auth\RegisterController;
     use App\Http\Controllers\TodoController;
@@ -14,6 +15,13 @@
     Route::group(['middleware' => 'auth'], function () {
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
         Route::get('/', [TodoController::class, 'index'])->name('todo');
-        Route::post('todo',[TodoController::class, 'store']);
+        Route::post('todo', [TodoController::class, 'store'])->name('todo.store');
+        Route::get('/todos', [TodoController::class, 'getItems']);
+        Route::post('/mark-as-complete', [TodoController::class, 'markAsComplete'])->name('todo.complete');
+        Route::post('/delete', [TodoController::class, 'deleteItem'])->name('todo.delete');
+    });
+    Route::group(['middleware' => ['auth', 'isAdmin']], function () {
+        Route::get('/admin', [UsersController::class, 'index'])->name('users');
+        Route::get('/admin/{id}/todos', [UsersController::class, 'todos'])->name('user.todos');
     });
 
