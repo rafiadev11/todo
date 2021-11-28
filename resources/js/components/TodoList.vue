@@ -49,7 +49,7 @@ export default {
         const addTodo = async () => {
             if (todo.value !== undefined) {
                 const response = await axios.post('/todo', {name: todo.value});
-                todos.value.push({name: response.data.name, completed_at: response.data.completed_at});
+                todos.value.push(response.data);
                 todo.value = '';
             }
         }
@@ -61,7 +61,6 @@ export default {
             await getItems();
         });
         const markAsComplete = async (idx) => {
-            console.log(idx);
             const item = todos.value[idx];
             const response = await axios.post("/mark-as-complete", {id: item.id});
             todos.value[idx].completed_at = response.data.completed_at;
